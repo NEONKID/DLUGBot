@@ -1,13 +1,11 @@
-import json, os
+import os
 
 from flask import Flask, request, jsonify
-from messages import busmessage, mainmessage
+from messages import busmessage, mainmessage, foodmessage
+from messages.loadresmsg import *
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
-
-keyboard = json.load(open('data/keyboard.json'))
-busList = json.load(open('data/keyboard_Bus.json'))
 
 
 @app.route('/message', methods=['POST'])
@@ -18,6 +16,10 @@ def postMessage():
             if _req['content'] == value:
                 return jsonify(busmessage.getBusInfo(_req['content']))
 
+        for value in restList['buttons']:
+            if _req['content'] == value:
+                return jsonify(foodmessage.getRestMenu(_req['content']))
+
         return jsonify(mainmessage.getResMessage(_req['content']))
 
     except KeyError:
@@ -26,14 +28,14 @@ def postMessage():
                 "text": "Sorry, This comment no response message...."
             },
 
-            "keyboard": keyboard
+            "keyboard": mainmessage.keyboard
         }
         return jsonify(_msg)
 
 
 @app.route('/keyboard', methods=['GET'])
 def getKeyboard():
-    return jsonify(keyboard)
+    return jsonify(mainmessage.keyboard)
 
 
 @app.route('/')
