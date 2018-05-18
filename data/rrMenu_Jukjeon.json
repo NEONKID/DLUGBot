@@ -1,0 +1,63 @@
+{
+    "[죽전]1층 1열람실": {
+        "message": {
+            "message_button": {
+
+            }
+        }
+    },
+
+    "[죽전]1층 6열람실": {
+        "message": {
+            "message_button": {
+
+            }
+        }
+    },
+
+    "[죽전]2층 2열람실": {
+        "message": {
+            "message_button": {
+
+            }
+        }
+    },
+
+    "[죽전]2층 3열람실": {
+        "message": {
+            "message_button": {
+
+            }
+        }
+    },
+
+    "[죽전]2층 4열람실": {
+        "message": {
+            "message_button": {
+
+            }
+        }
+    },
+
+    "[죽전]2층 대학원열람실": {
+        "message": {
+            "message_button": {
+
+            }
+        }
+    },
+
+    "[죽전]법학 열람실": {
+        "message": {
+            "message_button": {
+
+            }
+        }
+    },
+
+    "처음으로..": {
+        "message": {
+            "text": "가즈아~~!!"
+        }
+    }
+}

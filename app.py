@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask, request, jsonify
-from messages import busmessage, mainmessage, foodmessage
+from messages import busmessage, mainmessage, foodmessage, libmessage
 from messages.loadresmsg import *
 
 app = Flask(__name__)
@@ -19,6 +19,12 @@ def postMessage():
         for value in restList['buttons']:
             if _req['content'] == value:
                 return jsonify(foodmessage.getRestMenu(_req['content']))
+
+        rrList = json.load(open('data/keyboard_RR_All.json'))
+
+        for value in rrList['buttons']:
+            if _req['content'] == value:
+                return jsonify(libmessage.getRRSeat(_req['content']))
 
         return jsonify(mainmessage.getResMessage(_req['content']))
 
