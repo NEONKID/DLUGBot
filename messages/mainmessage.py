@@ -12,6 +12,9 @@ def getResMessage(topic):
     elif topic == '버스 언제 오지?':
         data[topic]['keyboard'] = busList
 
+    elif topic == '열람실 자리 확인':
+        data[topic]['keyboard'] = rrCampus
+
     else:
         data[topic]['keyboard'] = keyboard
 
