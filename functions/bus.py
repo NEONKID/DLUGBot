@@ -3,7 +3,7 @@ import requests
 # User agent
 __USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.167 Safari/537.36'
 __CONTENT_TYPE = 'application/x-www-form-urlencoded; charset=UTF-8'
-__headers = {'User-Agent': __USER_AGENT, 'Content-Type': __CONTENT_TYPE }
+__headers = {'User-Agent': __USER_AGENT, 'Content-Type': __CONTENT_TYPE}
 
 
 # Error / Info Message
@@ -12,12 +12,17 @@ __NOTICE_BUS = '상기 버스 정보는 1~2분 정도 차이가 있을 수 있�
 
 
 # Cheonan Bus information
-__CHEONAN_LINK = 'http://its.cheonan.go.kr/bis/predictInfo.do'
+__CHEONAN_LINK = 'http://its.cheonan.go.kr/'
 __CHEONAN_BUS = '28500'
 __CH_STATION = {
     "단국대학교": __CHEONAN_BUS + '1478',
     "단국대학교치대병원": __CHEONAN_BUS + '1595',
     "상명대학교": __CHEONAN_BUS + '0642'
+}
+__CH_ATDR = {
+    "단국대학교": "만남로",
+    "단국대학교치대병원": "망향로",
+    "상명대학교": "망향로"
 }
 
 
@@ -35,7 +40,7 @@ __JU_STATION = {
 def getBusCheonan(station):
     # Request & Response
     req = {'stopId': __CH_STATION[station.replace(' 정류장', '')]}
-    res = requests.post(url=__CHEONAN_LINK, data=req, headers=__headers).json()
+    res = requests.post(url=__CHEONAN_LINK + 'bis/predictInfo.do', data=req, headers=__headers).json()
 
     # Final return messages
     result = ''
@@ -52,6 +57,19 @@ def getBusCheonan(station):
     if info == '':
         result += __NONE_BUS
     else:
+        _atrReq = {
+            "atrdNm": __CH_ATDR[station.replace(' 정류장', '')],
+            "level": "9"
+        }
+        _atrHdr = {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+        }
+
+        _atrRes = requests.post(url=__CHEONAN_LINK + 'common/drawAtrdRoad.do', headers=_atrHdr, data=_atrReq).json()
+        for atdr in _atrRes:
+            if 0 < atdr['SPED'] < 22:
+                info += '※ ' + atdr['END_NM_NODE'] + "부터 " + atdr['STRT_NM_NODE'] + "까지 일부 정체.. \n"
+
         result += info + __NOTICE_BUS
 
     return result
