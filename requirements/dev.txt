@@ -1,4 +1,4 @@
 -r prod.txt
 
 # Debug
-Flask-DebugToolbar==0.10.1
+Flask-DebugToolbar

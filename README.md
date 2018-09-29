@@ -5,6 +5,7 @@
 ## Overview
 
 DLUG Chatbot Server is Dankook Linux User Group's Chatting robot, using KakaoTalk Plusfriend
+(https://pf.kakao.com/_uxaxjKu/chat)
 
 
 
@@ -31,6 +32,12 @@ export APP_SETTINGS="config.ProductionConfig"
 
 
 See the config.py more information.
+
+
+
+## Build status
+
+[![Build Status](https://travis-ci.org/NEONKID/DLUGBot.svg?branch=master)](https://travis-ci.org/NEONKID/DLUGBot)
 
 
 

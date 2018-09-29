@@ -1,0 +1,9 @@
+sudo: false
+language: generic # Default Python version 2.7.6 and 3.4.3 in Trusty
+addons:
+  apt:
+    packages: python3-pip
+before_install: pip3 install --user --upgrade pip
+before_script: export APP_SETTINGS="config.DevelopmentConfig"
+install: pip3 install --user -r requirements/dev.txt
+script: flask routes
