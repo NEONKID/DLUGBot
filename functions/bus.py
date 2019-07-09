@@ -1,4 +1,6 @@
 import requests
+from base64 import b64decode as dec
+
 
 # User agent
 __USER_AGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.167 Safari/537.36'
@@ -12,13 +14,18 @@ __NOTICE_BUS = '상기 버스 정보는 1~2분 정도 차이가 있을 수 있�
 
 
 # Cheonan Bus information
-__CHEONAN_LINK = 'http://its.cheonan.go.kr/'
+__CHEONAN_LINK = dec(b'aHR0cDovL2l0cy5jaGVvbmFuLmdvLmtyLw==').decode('utf-8')
+__CHEONAN_PREDICT = dec(b'YmlzL3ByZWRpY3RJbmZvLmRv').decode('utf-8')
+__CHEONAN_ROAD = dec(b'Y29tbW9uL2RyYXdBdHJkUm9hZC5kbw==').decode('utf-8')
+
 __CHEONAN_BUS = '28500'
+
 __CH_STATION = {
     "단국대학교": __CHEONAN_BUS + '1478',
     "단국대학교치대병원": __CHEONAN_BUS + '1595',
     "상명대학교": __CHEONAN_BUS + '0642'
 }
+
 __CH_ATDR = {
     "단국대학교": "만남로",
     "단국대학교치대병원": "망향로",
@@ -27,7 +34,7 @@ __CH_ATDR = {
 
 
 # SeongNam Bus information
-__JUKJEON_LINK = 'http://www.gbis.go.kr/gbis2014/schBusAPI.action'
+__JUKJEON_LINK = dec(b'aHR0cDovL3d3dy5nYmlzLmdvLmtyL2diaXMyMDE0L3NjaEJ1c0FQSS5hY3Rpb24=').decode('utf-8')
 __JUKJEON_BUS = '22800'
 __JU_STATION = {
     "단국대정문": __JUKJEON_BUS + '1978',
@@ -40,7 +47,7 @@ __JU_STATION = {
 def getBusCheonan(station):
     # Request & Response
     req = {'stopId': __CH_STATION[station.replace(' 정류장', '')]}
-    res = requests.post(url=__CHEONAN_LINK + 'bis/predictInfo.do', data=req, headers=__headers).json()
+    res = requests.post(url=__CHEONAN_LINK + __CHEONAN_PREDICT, data=req, headers=__headers).json()
 
     # Final return messages
     result = ''
@@ -65,7 +72,7 @@ def getBusCheonan(station):
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
         }
 
-        _atrRes = requests.post(url=__CHEONAN_LINK + 'common/drawAtrdRoad.do', headers=_atrHdr, data=_atrReq).json()
+        _atrRes = requests.post(url=__CHEONAN_LINK + __CHEONAN_ROAD, headers=_atrHdr, data=_atrReq).json()
         for atdr in _atrRes:
             if 0 < atdr['SPED'] < 22:
                 info += '※ ' + atdr['END_NM_NODE'] + "부터 " + atdr['STRT_NM_NODE'] + "까지 일부 정체.. \n"

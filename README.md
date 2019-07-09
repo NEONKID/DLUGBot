@@ -41,3 +41,8 @@ See the config.py more information.
 
 
 
+## Operation NOTICE
+
+This system is based on PlusFriend, an old chatbot system operated by KakaoTalk (Korea).
+
+However, the system is expected to **end in December 31, 2019.** Therefore, we will notify you that this service may also be terminated if you do not notice it on its own.

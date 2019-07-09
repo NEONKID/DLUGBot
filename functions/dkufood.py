@@ -1,5 +1,7 @@
 import requests, re
-from bs4 import BeautifulSoup
+
+from bs4 import BeautifulSoup as bs
+from base64 import b64decode as dec
 
 LOCATION = {
     "죽전": {
@@ -24,8 +26,9 @@ def requestFoodMenu(event):
     weekofyear = event['date']['weekofyear']
     weekday = event['date']['weekday']
 
-    SITE_LINK = "https://www.dankook.ac.kr/web/kor/-" + LOCATION[campus][
-        restaurant] + "?p_p_id=Food_WAR_foodportlet&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-2&p_p_col_pos=2&p_p_col_count=3&_Food_WAR_foodportlet_action=view"
+    LINK_HEAD = dec(b'aHR0cHM6Ly93d3cuZGFua29vay5hYy5rci93ZWIva29yLy0=').decode('utf-8')
+    LINK_TAIL = dec(b'P3BfcF9pZD1Gb29kX1dBUl9mb29kcG9ydGxldCZwX3BfbGlmZWN5Y2xlPTAmcF9wX3N0YXRlPW5vcm1hbCZwX3BfbW9kZT12aWV3JnBfcF9jb2xfaWQ9Y29sdW1uLTImcF9wX2NvbF9wb3M9MiZwX3BfY29sX2NvdW50PTMmX0Zvb2RfV0FSX2Zvb2Rwb3J0bGV0X2FjdGlvbj12aWV3').decode('utf-8')
+    SITE_LINK = LINK_HEAD + LOCATION[campus][restaurant] + LINK_TAIL
 
     # Form Data
     form_data = {
@@ -40,7 +43,7 @@ def requestFoodMenu(event):
     dku_html = dku_req.text
 
     # BeautifulSoup
-    dku_soup = BeautifulSoup(dku_html, features='html.parser')
+    dku_soup = bs(dku_html, features='html5lib')
 
     # Menu Code
     # 1 = Mon, 2 = Tue, 3 = Wed, 4 = Thu, 5 = Fri, 6 = Sat
@@ -64,3 +67,4 @@ def requestFoodMenu(event):
         result['message'] = dku_soup_response
 
     return result
+

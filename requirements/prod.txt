@@ -1,5 +1,10 @@
 # Flask / requests
-Flask==1.0.2
-requests>=2.20.0
-beautifulsoup4==4.6.0
-bs4==0.0.1
+Flask
+requests
+
+# BeatulSoup
+beautifulsoup4
+bs4
+
+# Parsing Library
+html5lib
