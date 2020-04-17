@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>functions.bus &mdash; D.L.U.G Bot  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> D.L.U.G Bot
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../apis.html">1. Web API 패키지</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../functions.html">2. 주요 기능 패키지</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../messages.html">3. 메시지 관련 패키지</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">D.L.U.G Bot</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>functions.bus</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for functions.bus</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">b64decode</span> <span class="k">as</span> <span class="n">dec</span>
+
+
+<span class="c1"># User agent</span>
+<span class="n">__USER_AGENT</span> <span class="o">=</span> <span class="s1">&#39;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.167 Safari/537.36&#39;</span>
+<span class="n">__CONTENT_TYPE</span> <span class="o">=</span> <span class="s1">&#39;application/x-www-form-urlencoded; charset=UTF-8&#39;</span>
+<span class="n">__headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="n">__USER_AGENT</span><span class="p">,</span> <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="n">__CONTENT_TYPE</span><span class="p">}</span>
+
+
+<span class="c1"># Error / Info Message</span>
+<span class="n">__NONE_BUS</span> <span class="o">=</span> <span class="s1">&#39;해당 정류장에 도착할 버스 정보가 없습니다.&#39;</span>
+<span class="n">__NOTICE_BUS</span> <span class="o">=</span> <span class="s1">&#39;상기 버스 정보는 1~2분 정도 차이가 있을 수 있으며 교통상황에 따라 달라질 수 있음을 참고하시기 바랍니다.&#39;</span>
+
+
+<span class="c1"># Cheonan Bus information</span>
+<span class="n">__CHEONAN_LINK</span> <span class="o">=</span> <span class="n">dec</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;aHR0cDovL2l0cy5jaGVvbmFuLmdvLmtyLw==&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">__CHEONAN_PREDICT</span> <span class="o">=</span> <span class="n">dec</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;YmlzL3ByZWRpY3RJbmZvLmRv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">__CHEONAN_ROAD</span> <span class="o">=</span> <span class="n">dec</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;Y29tbW9uL2RyYXdBdHJkUm9hZC5kbw==&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+
+<span class="n">__CHEONAN_BUS</span> <span class="o">=</span> <span class="s1">&#39;28500&#39;</span>
+
+<span class="n">__CH_STATION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;단국대학교&quot;</span><span class="p">:</span> <span class="n">__CHEONAN_BUS</span> <span class="o">+</span> <span class="s1">&#39;1478&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;단국대학교치대병원&quot;</span><span class="p">:</span> <span class="n">__CHEONAN_BUS</span> <span class="o">+</span> <span class="s1">&#39;1595&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;상명대학교&quot;</span><span class="p">:</span> <span class="n">__CHEONAN_BUS</span> <span class="o">+</span> <span class="s1">&#39;0642&#39;</span>
+<span class="p">}</span>
+
+<span class="n">__CH_ATDR</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;단국대학교&quot;</span><span class="p">:</span> <span class="s2">&quot;만남로&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;단국대학교치대병원&quot;</span><span class="p">:</span> <span class="s2">&quot;망향로&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;상명대학교&quot;</span><span class="p">:</span> <span class="s2">&quot;망향로&quot;</span>
+<span class="p">}</span>
+
+
+<span class="c1"># SeongNam Bus information</span>
+<span class="n">__JUKJEON_LINK</span> <span class="o">=</span> <span class="n">dec</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;aHR0cDovL3d3dy5nYmlzLmdvLmtyL2diaXMyMDE0L3NjaEJ1c0FQSS5hY3Rpb24=&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+<span class="n">__JUKJEON_BUS</span> <span class="o">=</span> <span class="s1">&#39;22800&#39;</span>
+<span class="n">__JU_STATION</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;단국대정문&quot;</span><span class="p">:</span> <span class="n">__JUKJEON_BUS</span> <span class="o">+</span> <span class="s1">&#39;1978&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;죽전야외음악당&quot;</span><span class="p">:</span> <span class="n">__JUKJEON_BUS</span> <span class="o">+</span> <span class="s1">&#39;0999&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;단국대치과병원&quot;</span><span class="p">:</span> <span class="n">__JUKJEON_BUS</span> <span class="o">+</span> <span class="s1">&#39;1736&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;단국대인문관&quot;</span><span class="p">:</span> <span class="n">__JUKJEON_BUS</span> <span class="o">+</span> <span class="s1">&#39;1981&#39;</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="getBusCheonan"><a class="viewcode-back" href="../../functions.bus.html#functions.bus.getBusCheonan">[docs]</a><span class="k">def</span> <span class="nf">getBusCheonan</span><span class="p">(</span><span class="n">station</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    천안 캠퍼스 주변 버스 정류장 정보를 가져옵니다 \n</span>
+<span class="sd">    (정보 제공: 천안버스정보 안내 시스템)</span>
+
+<span class="sd">    :type station: string</span>
+<span class="sd">    :param station: 정류장 이름</span>
+<span class="sd">    :return:</span>
+<span class="sd">        해당 정류장에 오는 버스 정보 \n</span>
+<span class="sd">        천안의 경우, 버스 번호, 시간, 남은 정류장 표시</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Request &amp; Response</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;stopId&#39;</span><span class="p">:</span> <span class="n">__CH_STATION</span><span class="p">[</span><span class="n">station</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; 정류장&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)]}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">__CHEONAN_LINK</span> <span class="o">+</span> <span class="n">__CHEONAN_PREDICT</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">req</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">__headers</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="c1"># Final return messages</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="c1"># Get bus information message in Cheonan</span>
+    <span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">res</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">bus</span><span class="p">[</span><span class="s1">&#39;RTIME&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">9999</span><span class="p">:</span>
+            <span class="n">info</span> <span class="o">+=</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bus</span><span class="p">[</span><span class="s1">&#39;ROUTE_NAME&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;번 (&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bus</span><span class="p">[</span><span class="s1">&#39;ROUTE_EXPLAIN&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;)]</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> \
+                    <span class="n">__convertTime</span><span class="p">(</span><span class="n">bus</span><span class="p">[</span><span class="s1">&#39;RTIME&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;후 도착 예정입니다.&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;현재 위치: &#39;</span> <span class="o">+</span> \
+                    <span class="nb">str</span><span class="p">(</span><span class="n">bus</span><span class="p">[</span><span class="s1">&#39;LAST_STOP_NAME&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;남은 버스 정류장: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bus</span><span class="p">[</span><span class="s1">&#39;RSTOP&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; 정류장</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;차량 번호: &#39;</span> <span class="o">+</span> \
+                    <span class="nb">str</span><span class="p">(</span><span class="n">bus</span><span class="p">[</span><span class="s1">&#39;PLATE_NO&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+
+    <span class="k">if</span> <span class="n">info</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">__NONE_BUS</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_atrReq</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;atrdNm&quot;</span><span class="p">:</span> <span class="n">__CH_ATDR</span><span class="p">[</span><span class="n">station</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; 정류장&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)],</span>
+            <span class="s2">&quot;level&quot;</span><span class="p">:</span> <span class="s2">&quot;9&quot;</span>
+        <span class="p">}</span>
+        <span class="n">_atrHdr</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;Content-Type&#39;</span><span class="p">:</span> <span class="s1">&#39;application/x-www-form-urlencoded; charset=UTF-8&#39;</span>
+        <span class="p">}</span>
+
+        <span class="n">_atrRes</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">__CHEONAN_LINK</span> <span class="o">+</span> <span class="n">__CHEONAN_ROAD</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">_atrHdr</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">_atrReq</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">atdr</span> <span class="ow">in</span> <span class="n">_atrRes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">atdr</span><span class="p">[</span><span class="s1">&#39;SPED&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">22</span><span class="p">:</span>
+                <span class="n">info</span> <span class="o">+=</span> <span class="s1">&#39;※ &#39;</span> <span class="o">+</span> <span class="n">atdr</span><span class="p">[</span><span class="s1">&#39;END_NM_NODE&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;부터 &quot;</span> <span class="o">+</span> <span class="n">atdr</span><span class="p">[</span><span class="s1">&#39;STRT_NM_NODE&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;까지 일부 정체.. </span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">info</span> <span class="o">+</span> <span class="n">__NOTICE_BUS</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="getBusJukjeon"><a class="viewcode-back" href="../../functions.bus.html#functions.bus.getBusJukjeon">[docs]</a><span class="k">def</span> <span class="nf">getBusJukjeon</span><span class="p">(</span><span class="n">station</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        죽전 캠퍼스 주변 버스 정류장 정보를 가져옵니다 \n</span>
+<span class="sd">        (정보 제공: 경기도 버스 안내 시스템)</span>
+
+<span class="sd">        :type station: string</span>
+<span class="sd">        :param station: 정류장 이름</span>
+<span class="sd">        :return:</span>
+<span class="sd">            해당 정류장에 오는 버스 정보 \n</span>
+<span class="sd">            죽전의 경우, 버스 번호, 시간, 남은 정류장, 좌석 정보 (직행 버스 한정) 제공</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Bus crowded</span>
+    <span class="n">seatlist</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;0&#39;</span><span class="p">:</span> <span class="s1">&#39;확인 불가&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;1&#39;</span><span class="p">:</span> <span class="s1">&#39;여유&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;2&#39;</span><span class="p">:</span> <span class="s1">&#39;보통&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;3&#39;</span><span class="p">:</span> <span class="s1">&#39;혼잡&#39;</span>
+    <span class="p">}</span>
+    <span class="n">asc</span> <span class="o">=</span> <span class="s1">&#39;직행좌석형시내버스&#39;</span>
+
+    <span class="c1"># Request &amp; Response</span>
+    <span class="n">req</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;cmd&#39;</span><span class="p">:</span> <span class="s1">&#39;searchBusStationJson&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;stationId&#39;</span><span class="p">:</span> <span class="n">__JU_STATION</span><span class="p">[</span><span class="n">station</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; 정류장&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)]</span>
+    <span class="p">}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">__JUKJEON_LINK</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">req</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">__headers</span><span class="p">)</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+
+    <span class="c1"># Final return messages</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="n">routetype</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+    <span class="c1"># Get bus information message</span>
+    <span class="k">for</span> <span class="n">ai</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="s1">&#39;busArrivalInfo&#39;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">ai</span><span class="p">[</span><span class="s1">&#39;stationId&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">req</span><span class="p">[</span><span class="s1">&#39;stationId&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">ai</span><span class="p">[</span><span class="s1">&#39;plateNo1&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">si</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">][</span><span class="s1">&#39;busStationInfo&#39;</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">ai</span><span class="p">[</span><span class="s1">&#39;routeName&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">si</span><span class="p">[</span><span class="s1">&#39;routeName&#39;</span><span class="p">]:</span>
+                        <span class="n">routetype</span> <span class="o">=</span> <span class="n">si</span><span class="p">[</span><span class="s1">&#39;routeTypeName&#39;</span><span class="p">]</span>
+                        <span class="k">break</span>
+
+                <span class="n">seat</span> <span class="o">=</span> <span class="s1">&#39;좌석 현황: &#39;</span> <span class="o">+</span> <span class="n">ai</span><span class="p">[</span><span class="s1">&#39;remainSeatCnt1&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;자리 남음&#39;</span> <span class="k">if</span> <span class="n">routetype</span> <span class="o">==</span> <span class="n">asc</span> \
+                    <span class="k">else</span> <span class="s1">&#39;버스 인원: &#39;</span> <span class="o">+</span> <span class="n">seatlist</span><span class="p">[</span><span class="n">ai</span><span class="p">[</span><span class="s1">&#39;crowded1&#39;</span><span class="p">]]</span>
+
+                <span class="n">info</span> <span class="o">+=</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ai</span><span class="p">[</span><span class="s1">&#39;routeName&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;번 (&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ai</span><span class="p">[</span><span class="s1">&#39;routeDestName&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; 방면), &#39;</span> <span class="o">+</span> <span class="n">routetype</span> <span class="o">+</span> <span class="s1">&#39;]</span><span class="se">\n</span><span class="s1">&#39;</span> \
+                        <span class="o">+</span> <span class="n">__convertTime</span><span class="p">(</span><span class="n">ai</span><span class="p">[</span><span class="s1">&#39;predictTime1&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;후 도착 예정입니다.&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> \
+                        <span class="o">+</span> <span class="s1">&#39;현재 위치: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ai</span><span class="p">[</span><span class="s1">&#39;stationNm1&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ai</span><span class="p">[</span><span class="s1">&#39;locationNo1&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;번째 전)</span><span class="se">\n</span><span class="s1">&#39;</span> \
+                        <span class="o">+</span> <span class="n">seat</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;차량 번호: &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ai</span><span class="p">[</span><span class="s1">&#39;plateNo1&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+
+    <span class="k">if</span> <span class="n">info</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">__NONE_BUS</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">info</span> <span class="o">+</span> <span class="n">__NOTICE_BUS</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<span class="k">def</span> <span class="nf">__convertTime</span><span class="p">(</span><span class="n">time</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">60</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;시간 &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">%</span> <span class="mi">60</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;분 &#39;</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">%</span> <span class="mi">60</span> <span class="o">!=</span> <span class="mi">0</span> \
+            <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">/</span> <span class="mi">60</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;시간 &#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;분 &#39;</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;잠시 &#39;</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Neon K.I.D (Kwang Soo Jeong)
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
