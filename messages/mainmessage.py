@@ -3,6 +3,15 @@ from .loadresmsg import *
 
 # 요청한 메시지에 따라 응답 메시지 전송...
 def getResMessage(topic):
+    """
+    카카오톡에서 사용자가 입력한 메인 메뉴를 받는 함수
+
+    :type topic: string
+    :param topic: 메인 메시지
+    :return: 각 메시지에 정해진 메시지로 반환
+
+    """
+
     with open('data/resMsg.json') as msg_File:
         data = json.load(msg_File)
 

@@ -5,6 +5,15 @@ from functions import dkurr
 
 # 요청한 도서관의 좌석 현황을 가져옵니다..
 def getRRSeat(topic):
+    """
+    카카오톡에서 사용자가 입력한 열람실 정보를 받는 함수
+
+    :type topic: string
+    :param topic: 열람실 이름
+    :return: 카카오톡에 링크 메시지로 반환
+
+    """
+
     data = None
     if topic[1:3] == '죽전':
         with open('data/rrMenu_Jukjeon.json') as msg_File:

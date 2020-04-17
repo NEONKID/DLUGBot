@@ -45,6 +45,17 @@ __JU_STATION = {
 
 
 def getBusCheonan(station):
+    """
+    천안 캠퍼스 주변 버스 정류장 정보를 가져옵니다 \n
+    (정보 제공: 천안버스정보 안내 시스템)
+
+    :type station: string
+    :param station: 정류장 이름
+    :return:
+        해당 정류장에 오는 버스 정보 \n
+        천안의 경우, 버스 번호, 시간, 남은 정류장 표시
+    """
+
     # Request & Response
     req = {'stopId': __CH_STATION[station.replace(' 정류장', '')]}
     res = requests.post(url=__CHEONAN_LINK + __CHEONAN_PREDICT, data=req, headers=__headers).json()
@@ -83,6 +94,17 @@ def getBusCheonan(station):
 
 
 def getBusJukjeon(station):
+    """
+        죽전 캠퍼스 주변 버스 정류장 정보를 가져옵니다 \n
+        (정보 제공: 경기도 버스 안내 시스템)
+
+        :type station: string
+        :param station: 정류장 이름
+        :return:
+            해당 정류장에 오는 버스 정보 \n
+            죽전의 경우, 버스 번호, 시간, 남은 정류장, 좌석 정보 (직행 버스 한정) 제공
+    """
+
     # Bus crowded
     seatlist = {
         '0': '확인 불가',

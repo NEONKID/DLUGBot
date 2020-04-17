@@ -3,7 +3,6 @@ import requests, re
 from bs4 import BeautifulSoup as bs
 from base64 import b64decode as dec
 
-
 # Jukjeon information links
 __JUKJEON_LINK = dec(b'aHR0cDovLzIyMC4xNDkuMjQwLjcwL1NlYXRXZWIvZG9taWFuNS5hc3A=').decode('utf-8')
 __JUKJEON_VIEW_LINK = dec(b'aHR0cDovLzIyMC4xNDkuMjQwLjcwL1NlYXRXZWIvcm9vbXZpZXc1LmFzcD9yb29tX25vPQ==').decode('utf-8')
@@ -40,6 +39,7 @@ __CH_RR = {
     '1층 제3열람실 B구역': 12,
     '1층 제3열람실 C구역': 13
 }
+
 
 def __requestRRInfoJukjeon(location):
     # HTML code for euc-kr(cp949) encoding
@@ -149,6 +149,16 @@ def __requestRRInfoCheonan(location):
 
 
 def requestRRInfo(event):
+    """
+    캠퍼스 내 열람실 좌석 정보를 가져옵니다
+
+    :type event: JSON
+    :param event: ``{ region: 캠퍼스 이름, location: 열람실 번호 }``
+    :return:
+    요청 성공 여부와 메시지를 JSON 형태로 전달
+    ``{ message: 전달 메시지, success: 요청 여부 }``
+    """
+
     if event['region'] == '죽전':
         _res = __requestRRInfoJukjeon(event['location'])
 

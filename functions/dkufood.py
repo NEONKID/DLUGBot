@@ -1,4 +1,4 @@
-import requests, re
+import requests, re, datetime
 
 from bs4 import BeautifulSoup as bs
 from base64 import b64decode as dec
@@ -19,12 +19,26 @@ LOCATION = {
 
 
 def requestFoodMenu(event):
+    """
+    캠퍼스 내 식당 메뉴 정보를 가져옵니다. \n
+    (캠퍼스 내에 존재하지 않는 식당을 가져올 경우, 오류 발생) \n\n
+
+    식단 정보는 최근 7일 까지만 크롤링이 가능합니다
+
+    :type event: JSON
+    :param event: ``{ location: { campus: 캠퍼스 이름, restaurant: 식당 이름 } }``
+    :return: 요청 성공 여부와 메시지를 JSON 형태로 전달
+    ``{ result: { success: 요청 여부, message: 식단 메뉴 정보 메시지 } }``
+    """
+
     campus = event['location']['campus']
     restaurant = event['location']['restaurant']
 
-    year = event['date']['year']
-    weekofyear = event['date']['weekofyear']
-    weekday = event['date']['weekday']
+    now = datetime.datetime.now()
+
+    year = now.year
+    weekofyear = now.isocalendar()[1]
+    weekday = now.weekday() + 1
 
     LINK_HEAD = dec(b'aHR0cHM6Ly93d3cuZGFua29vay5hYy5rci93ZWIva29yLy0=').decode('utf-8')
     LINK_TAIL = dec(b'P3BfcF9pZD1Gb29kX1dBUl9mb29kcG9ydGxldCZwX3BfbGlmZWN5Y2xlPTAmcF9wX3N0YXRlPW5vcm1hbCZwX3BfbW9kZT12aWV3JnBfcF9jb2xfaWQ9Y29sdW1uLTImcF9wX2NvbF9wb3M9MiZwX3BfY29sX2NvdW50PTMmX0Zvb2RfV0FSX2Zvb2Rwb3J0bGV0X2FjdGlvbj12aWV3').decode('utf-8')

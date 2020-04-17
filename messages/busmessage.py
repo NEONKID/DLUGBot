@@ -5,6 +5,16 @@ from .loadresmsg import busList, keyboard
 
 
 def routeBus(request):
+    """
+    카카오톡에서 요청 받은 버스 정보를 가지고, 메시지로 반환하는 함수
+
+    :type request: JSON
+    :param request: ``{ location: 지역 이름 (캠퍼스), station: 정류장 이름 }``
+    :return: 요청 성공 여부와 메시지를 JSON 형태로 전달
+    ``{ result: { success: 요청 여부, message: 실시간 버스 정보 메시지 } }``
+
+    """
+
     try:
         if request['location'] == '죽전':
             _res = {
@@ -32,6 +42,15 @@ def routeBus(request):
 
 
 def getBusInfo(topic):
+    """
+    카카오톡에서 사용자가 입력한 정류장 이름을 받는 함수
+
+    :type topic: string
+    :param topic: 정류장 이름
+    :return: 카카오톡에 실제 보여지는 메시지로 반환
+
+    """
+
     with open('data/busMenu.json') as msg_File:
         data = json.load(msg_File)
 
